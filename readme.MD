@@ -45,7 +45,7 @@ kubectl get nodes
 **RDS**:
 * Connect to RDS using bastion host.
 ```
-mysql -h db-dev -u root -pExpenseApp1
+mysql -h db-dev.lingaiah.online -u root -pExpenseApp1
 ```
 * We are creating schema while creating RDS. But table should be created.
 * Refer backend.sql to create
