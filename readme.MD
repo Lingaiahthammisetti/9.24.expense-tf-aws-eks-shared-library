@@ -41,7 +41,10 @@ aws eks update-kubeconfig --region us-east-1 --name expense-dev
 ```
 kubectl get nodes
 ```
-
+Create a namespace
+```
+kubectl create namespace expense
+```
 **RDS**:
 * Connect to RDS using bastion host.
 ```
