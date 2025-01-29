@@ -55,9 +55,6 @@ mysql -h db-dev.lingaiah.online -u root -pExpenseApp1
 
 
 ```
-CREATE DATABASE IF NOT EXISTS transactions;
-```
-```
 USE transactions;
 ```
 ```
