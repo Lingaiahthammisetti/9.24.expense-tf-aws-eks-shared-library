@@ -149,7 +149,6 @@ spec:
     port: 80 #service-port
     targetPort: 8080 #target-port
 ---
-
 apiVersion: elbv2.k8s.aws/v1beta1
 kind: TargetGroupBinding
 metadata:
@@ -159,11 +158,8 @@ spec:
   serviceRef:
     name: frontend # route traffic to the awesome-service
     port: 80
-  targetGroupARN: 
+  targetGroupARN: arn:aws:elasticloadbalancing:us-east-1:730335449147:targetgroup/expense-dev-frontend/edb4d1d4bfc787b9
   
-  #arn:aws:elasticloadbalancing:us-east-1:315069654700:targetgroup/expense-dev-frontend/709ac65514f95b53
-
-
 
 
 
