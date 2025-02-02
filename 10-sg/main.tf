@@ -1,7 +1,8 @@
 #First creating security group with modules
 #Second attaching dependent ports to security group using aws Security group rule
 module "db" {
-source ="../../5.12.terraform-aws-securitygroup"
+#source ="../../5.12.terraform-aws-securitygroup"
+source ="git::https://github.com/Lingaiahthammisetti/5.12.terraform-aws-securitygroup.git?ref=main"
 project_name = var.project_name
 environment =  var.environment
 sg_description = "SG for DB MySQL Instances"
@@ -10,7 +11,8 @@ common_tags = var.common_tags
 sg_name = "db"
 }
 module "ingress" {
-source ="../../5.12.terraform-aws-securitygroup"
+#source ="../../5.12.terraform-aws-securitygroup"
+source ="git::https://github.com/Lingaiahthammisetti/5.12.terraform-aws-securitygroup.git?ref=main"
 project_name = var.project_name
 environment =  var.environment
 sg_description = "SG for Ingress Controller"
@@ -19,7 +21,8 @@ common_tags = var.common_tags
 sg_name = "ingress"
 }
 module "cluster" {
-source ="../../5.12.terraform-aws-securitygroup"
+#source ="../../5.12.terraform-aws-securitygroup"
+source ="git::https://github.com/Lingaiahthammisetti/5.12.terraform-aws-securitygroup.git?ref=main"
 project_name = var.project_name
 environment =  var.environment
 sg_description = "SG for EKS Control Plane"
@@ -28,7 +31,8 @@ common_tags = var.common_tags
 sg_name = "eks-control-plane"
 }
 module "node" {
-source ="../../5.12.terraform-aws-securitygroup"
+#source ="../../5.12.terraform-aws-securitygroup"
+source ="git::https://github.com/Lingaiahthammisetti/5.12.terraform-aws-securitygroup.git?ref=main"
 project_name = var.project_name
 environment =  var.environment
 sg_description = "SG for EKS node"
@@ -37,7 +41,8 @@ common_tags = var.common_tags
 sg_name = "eks-node"
 }
 module "bastion" {
-source ="../../5.12.terraform-aws-securitygroup"
+#source ="../../5.12.terraform-aws-securitygroup"
+source ="git::https://github.com/Lingaiahthammisetti/5.12.terraform-aws-securitygroup.git?ref=main"
 project_name = var.project_name
 environment =  var.environment
 sg_description = "SG for Bastion Instances"
@@ -46,7 +51,8 @@ common_tags = var.common_tags
 sg_name = "bastion"
 }
 module "vpn" {
-source ="../../5.12.terraform-aws-securitygroup"
+#source ="../../5.12.terraform-aws-securitygroup"
+source ="git::https://github.com/Lingaiahthammisetti/5.12.terraform-aws-securitygroup.git?ref=main"
 project_name = var.project_name
 environment =  var.environment
 sg_description = "SG for VPN Instances"
@@ -56,7 +62,7 @@ ingress_rules   = var.vpn_sg_rules
 sg_name = "vpn"
 }
 
-#Bastion can be accessed from public
+# #Bastion can be accessed from public
 resource "aws_security_group_rule" "bastion_public" {
     type = "ingress"
     from_port = 22
@@ -65,7 +71,7 @@ resource "aws_security_group_rule" "bastion_public" {
     cidr_blocks = ["0.0.0.0/0"]
     security_group_id = module.bastion.sg_id
 }
-#EKS Cluster can be accessed form bastion host
+#EKS Cluster can be accessed from bastion host
 resource "aws_security_group_rule" "cluster_bastion" {
     type = "ingress"
     from_port = 443
@@ -74,7 +80,7 @@ resource "aws_security_group_rule" "cluster_bastion" {
     source_security_group_id = module.bastion.sg_id # source is where you are getting traffic from.
     security_group_id = module.cluster.sg_id  
 }
-#EKS Cluster plane accepting all traffic from nodes
+# #EKS Cluster plane accepting all traffic from nodes
 resource "aws_security_group_rule" "cluster_node" {
     type = "ingress"
     from_port = 0
@@ -92,7 +98,7 @@ resource "aws_security_group_rule" "node_cluster" {
     source_security_group_id = module.cluster.sg_id 
     security_group_id = module.node.sg_id  
 }
-#EKS nodes should accept all traffic from nodes with in VPC CIDR range
+# #EKS nodes should accept all traffic from nodes with in VPC CIDR range
 resource "aws_security_group_rule" "node_vpc" {
     type = "ingress"
     from_port = 0
@@ -101,7 +107,7 @@ resource "aws_security_group_rule" "node_vpc" {
     cidr_blocks = ["10.0.0.0/16"]
     security_group_id = module.node.sg_id  
 }
-#RDS accepting connections from bastion
+# #RDS accepting connections from bastion
 resource "aws_security_group_rule" "db_bastion" {
     type = "ingress"
     from_port = 3306
@@ -110,7 +116,7 @@ resource "aws_security_group_rule" "db_bastion" {
     source_security_group_id = module.bastion.sg_id # source is where you are getting traffic from.
     security_group_id = module.db.sg_id  
 }
-#DB should accept connections from EKS nodes
+# #DB should accept connections from EKS nodes
 resource "aws_security_group_rule" "db_node" {
     type = "ingress"
     from_port = 3306
@@ -137,7 +143,7 @@ resource "aws_security_group_rule" "ingress_public_http" {
     cidr_blocks = ["0.0.0.0/0"]
     security_group_id = module.ingress.sg_id  
 }
-#Node is accepting  traffic from ingress
+# #Node is accepting  traffic from ingress
 resource "aws_security_group_rule" "node_ingress" {
     type = "ingress"
     from_port = 30000
