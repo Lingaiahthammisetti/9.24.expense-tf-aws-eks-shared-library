@@ -109,7 +109,7 @@ spec:
       component: frontend
       project: expense
       tier: web
-#below is pod definition
+  #below is pod definition
   template:
     metadata:
       labels:
@@ -158,12 +158,4 @@ spec:
   serviceRef:
     name: frontend # route traffic to the awesome-service
     port: 80
-  targetGroupARN: arn:aws:elasticloadbalancing:us-east-1:730335449147:targetgroup/expense-dev-frontend/edb4d1d4bfc787b9
-  
-
-
-
-
-
-
-           
+  targetGroupARN: arn:aws:elasticloadbalancing:us-east-1:730335449147:targetgroup/expense-dev-frontend/15ea0d8f4583339a

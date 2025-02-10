@@ -87,7 +87,7 @@ eksctl utils associate-iam-oidc-provider --region us-east-1 --cluster expense-de
 ```
 * Download an IAM policy for the LBC using one of the following commands:
 ```
-https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.8.1/docs/install/iam_policy.json
+curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.8.2/docs/install/iam_policy.json
 ```
 
 * Create an IAM policy named AWSLoadBalancerControllerIAMPolicy. If you downloaded a different policy, replace iam-policy with the name of the policy that you downloaded.
@@ -102,8 +102,9 @@ eksctl create iamserviceaccount \
 --cluster=expense-dev \
 --namespace=kube-system \
 --name=aws-load-balancer-controller \
---attach-policy-arn=arn:aws:iam::<AWS_ACCOUNT_ID>:policy/AWSLoadBalancerControllerIAMPolicy \
+--attach-policy-arn=arn:aws:iam::730335449147:policy/AWSLoadBalancerControllerIAMPolicy \
 --override-existing-serviceaccounts \
+--region us-east-1 \
 --approve
 ```
 
@@ -115,7 +116,7 @@ helm repo add eks https://aws.github.io/eks-charts
 * Helm install command for clusters with IRSA:
 
 ```
-helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=expense-dev --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=expense-dev
 ```
 
 * check aws-load-balancer-controller is running in kube-system namespace.
