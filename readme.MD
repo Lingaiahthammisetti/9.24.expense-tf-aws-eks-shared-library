@@ -1,3 +1,24 @@
+# Project consists of below componets:
+    9.24.expense-tf-aws-eks-shared-library
+    9.25.tf-aws-eks-tools-shared-library
+    9.26.jenkins-shared-library-expense
+    9.27.backend-shared-library
+    9.28.frontend-shared-library
+
+# Infrastructure creation and deletion
+```
+for i in 00-vpc/ 10-sg/ 20-db/ 30-bastion/ 40-eks/ 50-acm/ 60-ingress-alb/ 70-ecr/ ; do cd $i; terraform init -reconfigure; cd .. ; done 
+```
+```
+for i in 00-vpc/ 10-sg/ 20-db/ 30-bastion/ 40-eks/ 50-acm/ 60-ingress-alb/ 70-ecr/  ; do cd $i; terraform plan; cd .. ; done 
+```
+```
+for i in 00-vpc/ 10-sg/ 20-db/ 30-bastion/ 40-eks/ 50-acm/ 60-ingress-alb/ 70-ecr/ ; do cd $i; terraform apply -auto-approve; cd .. ; done 
+```
+```
+for i in  70-ecr/ 60-ingress-alb/ 50-acm/ 40-eks/ 30-bastion/ 20-db/ 10-sg/ 00-vpc/; do cd $i; terraform destroy -auto-approve; cd .. ; done 
+```
+
 # Infrastructure
 
 ![alt text](eks-infra.svg)
@@ -68,7 +89,7 @@ CREATE TABLE IF NOT EXISTS transactions (
 );
 ```
 ```
-CREATE USER IF NOT EXISTS 'expense'@'%' IDENTIFIED BY 'ExpenseApp@1';
+CREATE USER IF NOT EXISTS 'expense'@'%' IDENTIFIED BY 'ExpenseApp1';
 ```
 ```
 GRANT ALL ON transactions.* TO 'expense'@'%';
@@ -95,6 +116,12 @@ curl -o iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-lo
 aws iam create-policy --policy-name AWSLoadBalancerControllerIAMPolicy --policy-document file://iam-policy.json
 ```
 
+* (Optional) Use Existing Policy:
+```
+aws iam list-policies --query "Policies[?PolicyName=='AWSLoadBalancerControllerIAMPolicy'].Arn" --output text
+
+```
+
 * Create a IAM role and ServiceAccount for the AWS Load Balancer controller, use the ARN from the step above
 
 ```
@@ -102,7 +129,7 @@ eksctl create iamserviceaccount \
 --cluster=expense-dev \
 --namespace=kube-system \
 --name=aws-load-balancer-controller \
---attach-policy-arn=arn:aws:iam::730335449147:policy/AWSLoadBalancerControllerIAMPolicy \
+--attach-policy-arn=arn:aws:iam::484907532817:policy/AWSLoadBalancerControllerIAMPolicy \
 --override-existing-serviceaccounts \
 --region us-east-1 \
 --approve
@@ -124,6 +151,36 @@ helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n ku
 kubectl get pods -n kube-system
 ```
 
+```
+kubectl get nodes
+```
+```
+kubens expense
+```
+```
+kubectl get pods
+```
+
+* Please run the 'aws configure' on jenkins-agent on ec2-user.
+    * aws configure
+    * Access Key
+    * Secret Access Key
+    * Default Region name
+    * Default output format
 
 
+* Trouble shooting the Mysql Database:
+
+* Connect to RDS using bastion host.
+```
+mysql -h db-dev.lingaiah.online -u root -pExpenseApp1
+```
+
+```
+USE transactions;
+```
+
+```
+Select * from transactions;
+```
 

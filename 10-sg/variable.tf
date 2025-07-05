@@ -13,7 +13,6 @@ variable "common_tags" {
 }
 variable "db_sg_description" {
   default = "SG for DB Mysql Instances"
-  
 }
 
 # variable "vpn_sg_rules" {
