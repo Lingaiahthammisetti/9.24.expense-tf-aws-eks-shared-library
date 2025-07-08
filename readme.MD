@@ -1,4 +1,4 @@
-# Project consists of below componets:
+# Project consists of below components:
     9.24.expense-tf-aws-eks-shared-library
     9.25.tf-aws-eks-tools-shared-library
     9.26.jenkins-shared-library-expense
@@ -102,16 +102,20 @@ Create a namespace
 kubectl create namespace expense
 ```
 **RDS**:
-* Connect to RDS using bastion host.
+* Connect to RDS using bastion:
 ```
 mysql -h db-dev.lingaiah.online -u root -pExpenseApp1
 ```
-* We are creating schema while creating RDS. But table should be created.
-* Refer backend.sql to create
-    * Table
-    * User
-    * flush privileges
 
+We are creating schema while creating RDS. But table should be created.
+Refer backend.sql to create
+Table
+User
+flush privileges
+
+* CREATE DATABASE IF NOT EXISTS transactions;   
+* Created already transactions database through terraform code
+* db_name  = "transactions" #default schema for expense project
 
 ```
 USE transactions;
@@ -123,9 +127,13 @@ CREATE TABLE IF NOT EXISTS transactions (
     description VARCHAR(255)
 );
 ```
+
+* Create the User:
 ```
-CREATE USER IF NOT EXISTS 'expense'@'%' IDENTIFIED BY 'ExpenseApp1';
+CREATE USER IF NOT EXISTS 'expense'@'%' IDENTIFIED BY 'ExpenseApp@1';
 ```
+* Creates a MySQL user named expense that can connect from any host ('%').
+
 ```
 GRANT ALL ON transactions.* TO 'expense'@'%';
 ```
@@ -174,6 +182,12 @@ eksctl create iamserviceaccount \
 ```
 helm repo add eks https://aws.github.io/eks-charts
 ```
+* Delete the Existing ServiceAccount (Safe if not in Use Yet)
+* If the controller isn’t in active use (or you’re setting it up for the first time), delete the ServiceAccount and reinstall:
+
+```
+kubectl delete serviceaccount aws-load-balancer-controller -n kube-system
+```
 
 * Helm install command for clusters with IRSA:
 
@@ -215,6 +229,22 @@ mysql -h db-dev.lingaiah.online -u root -pExpenseApp1
 USE transactions;
 ```
 
+ 9.27.backend-shared-library
+* Create a feature branch and switch to it.
+git branch feature-100
+git checkout -b feature-100
+
+* Note: In Jenkins CICD, for CI pipeline we will use multibranch pipeline and it has BRANCH_NAME variable exited. For CD pipeline, We will use pipeline project.
+
+* Note: I have faced version 1.8.0. feature-1 already existed in remote repository. You always push changes into main branch, it is the issue. You should push changes into feature-1, feature-2, feature-3.
+
+* Create and Switch to the New Branch (recommended):
+git checkout -b feature-100
+
+* Push changes into new branch feature-100
+git add .;git commit -m "k8s backend shared library"; git push -u origin feature-100;
+
+
 ```
 Select * from transactions;
 ```
@@ -222,3 +252,15 @@ Select * from transactions;
     First Delete all applications frontend, backend, db.
     Second Delete all Tools Jenkins, all others
     Third Delete infra and its denpendencies.
+
+
+
+* Important Points:
+* Note:  Before deploy is the process of calling another pipeline cd-deploy. Now deploy is the creating manifest files.
+
+* Note: We can templatize our application means replacing component values backend, frontend dynamically. For this, We use helm in Kubernetes for templatizing the entire project.
+
+* Note: For EKS Cluster deployment, we use a Pipeline Project, not a multibranch pipeline — so BRANCH_NAME is not available.
+For Shared Pipelines, we use Multibranch Pipelines, where BRANCH_NAME is available
+
+* Note: For EKS Cluster deployment, We use Jenkins pipeline project, not the multi branch pipeline. for Shared Pipeline project, we use multi branch pipeline, the default variable available BRANCH_NAME available in multi-branch pipeline, not in pipeline project in Jenkins CICD
