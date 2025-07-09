@@ -228,6 +228,12 @@ mysql -h db-dev.lingaiah.online -u root -pExpenseApp1
 ```
 USE transactions;
 ```
+```
+select * from transactions;
+```
+* Note: 
+    * we have created a branch backend-feature-10 in backend, There are two branches 1. main, 2. backend-feature-10.
+    * we have created a branch frontend-feature-10 in frontend, There are two branches 1. main, 2. frontend-feature-20.
 
  9.27.backend-shared-library
 * Create a feature branch and switch to it.
@@ -245,9 +251,6 @@ git checkout -b feature-100
 git add .;git commit -m "k8s backend shared library"; git push -u origin feature-100;
 
 
-```
-Select * from transactions;
-```
 * Resource delete steps
     First Delete all applications frontend, backend, db.
     Second Delete all Tools Jenkins, all others
